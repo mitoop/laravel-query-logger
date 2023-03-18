@@ -4,7 +4,7 @@
 
 ## 安装
 ```shell
-$ composer require mitoop/laravel-query-logger
+$ composer require --dev mitoop/laravel-query-logger
 ```
 
 ## 配置
