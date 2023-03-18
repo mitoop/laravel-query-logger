@@ -1,0 +1,24 @@
+{
+    "name": "mitoop/laravel-query-logger",
+    "type": "library",
+    "require": {
+        "illuminate/support": "^6|^7|^8|^9|^10"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mitoop\\LaravelQueryLogger\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mitoop",
+            "email": "me@mitoop.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": ["Mitoop\\LaravelQueryLogger\\ServiceProvider"]
+        }
+    }
+}
