@@ -14,45 +14,57 @@ class ServiceProvider extends LaravelServiceProvider
             return;
         }
 
-        DB::listen(function ($query) {
-            $bindings = $query->connection->prepareBindings($query->bindings);
-
-            $sql = preg_replace_callback('/(?<!\?)\?(?!\?)/', static function () use ($query, &$bindings) {
-                $value = array_shift($bindings);
-
-                switch ($value) {
-                    case null:
-                        $value = 'null';
-
-                        break;
-                    case is_bool($value):
-                        $value = $value ? 'true' : 'false';
-
-                        break;
-                    case is_numeric($value):
-                        break;
-                    default:
-                        $value = $query->connection->getPdo()->quote((string) $value);
-
-                        break;
-                }
-
-                return $value;
-            }, $query->sql);
-
+        DB::listen(function ($event) {
             Log::channel($this->app['config']->get('logging.query.channel'))->debug(
                 vsprintf('[%s] [%s] %s',
                     [
-                        $query->connection->getDatabaseName(),
-                        self::formatDuration($query->time),
-                        $sql,
+                        $event->connection->getDatabaseName(),
+                        $this->formatDuration($event->time),
+                        $this->getSql($event, version_compare($this->app->version(), '10.15.0', '>=')),
                     ]
                 )
             );
         });
     }
 
-    protected static function formatDuration($seconds)
+    private function getSql($event, $v1015 = false)
+    {
+        $bindings = $event->connection->prepareBindings($event->bindings);
+
+        if ($v1015) {
+            return $event->connection
+                         ->getQueryGrammar()
+                         ->substituteBindingsIntoRawSql(
+                             $event->sql,
+                             $bindings
+                         );
+        }
+
+        return preg_replace_callback('/(?<!\?)\?(?!\?)/', static function () use ($event, &$bindings) {
+            $value = array_shift($bindings);
+
+            switch ($value) {
+                case null:
+                    $value = 'null';
+
+                    break;
+                case is_bool($value):
+                    $value = $value ? 'true' : 'false';
+
+                    break;
+                case is_numeric($value):
+                    break;
+                default:
+                    $value = $event->connection->getPdo()->quote((string) $value);
+
+                    break;
+            }
+
+            return $value;
+        }, $event->sql);
+    }
+
+    private function formatDuration($seconds)
     {
         if ($seconds < 1) {
             return round($seconds * 1000).'μs';
