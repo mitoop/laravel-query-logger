@@ -27,11 +27,11 @@ class ServiceProvider extends LaravelServiceProvider
         });
     }
 
-    private function getSql($event, $v1015 = false)
+    private function getSql($event, $lge1015)
     {
         $bindings = $event->connection->prepareBindings($event->bindings);
 
-        if ($v1015) {
+        if ($lge1015) {
             return $event->connection
                          ->getQueryGrammar()
                          ->substituteBindingsIntoRawSql(

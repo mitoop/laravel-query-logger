@@ -1,10 +1,10 @@
-# Laravel Query Logger
 
-记录 SQL 执行日志
+<h1 align="center">Laravel Query Logger</h1>
+<p align="center">🍎 记录 SQL 执行日志</p>
 
 ## 安装
 ```shell
-$ composer require --dev mitoop/laravel-query-logger
+composer require --dev mitoop/laravel-query-logger
 ```
 
 ## 配置
@@ -14,22 +14,21 @@ $ composer require --dev mitoop/laravel-query-logger
 
 return [
     'channels' => [
- 
-        ...
-        
-        // sql channel          
+        ...        
         'sql' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/sql.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'permission' => 0664,
         ],
     ],
 
-    // 配置
+    // 新增 query
     'query' => [
-        'enabled' => true, // 是否开启记录 SQL 日志
-        'channel' => 'sql' // SQL 日志 channel
+         // 是否开启记录
+        'enabled' => env('ENABLE_QUERY_LOG', false),
+         // 记录的频道
+        'channel' => 'sql'
     ]
 ];
 ```
