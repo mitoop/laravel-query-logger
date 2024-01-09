@@ -33,18 +33,18 @@ class ServiceProvider extends LaravelServiceProvider
 
         if ($lge1015) {
             return $event->connection
-                         ->getQueryGrammar()
-                         ->substituteBindingsIntoRawSql(
-                             $event->sql,
-                             $bindings
-                         );
+                ->getQueryGrammar()
+                ->substituteBindingsIntoRawSql(
+                    $event->sql,
+                    $bindings
+                );
         }
 
         return preg_replace_callback('/(?<!\?)\?(?!\?)/', static function () use ($event, &$bindings) {
             $value = array_shift($bindings);
 
-            switch ($value) {
-                case null:
+            switch (true) {
+                case $value === null:
                     $value = 'null';
 
                     break;
