@@ -2,7 +2,7 @@
     "name": "mitoop/laravel-query-logger",
     "type": "library",
     "require": {
-        "illuminate/support": "^6|^7|^8|^9|^10"
+        "illuminate/support": "^6|^7|^8|^9|^10|^11"
     },
     "license": "MIT",
     "autoload": {
