@@ -8,9 +8,18 @@ use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
 {
+    public function register()
+    {
+        $this->app->singleton(TriggerManager::class, function ($app) {
+            return new TriggerManager($app);
+        });
+    }
+
     public function boot()
     {
-        if (! $this->app['config']->get('logging.query.enabled', false)) {
+        if (! $this->app['config']->get('logging.query.enabled')
+            ||
+            ! $this->app->make(TriggerManager::class)->hasTriggerConditionMet()) {
             return;
         }
 
