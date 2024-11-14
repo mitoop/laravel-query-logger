@@ -38,7 +38,7 @@ return [
 ```php
 public function register()
 {
-    $this->app->make(TriggerManager::class)->bindTriggerCondition(function(){
+    $this->app->bind(TriggerManager::TRIGGER_BIND_KEY, function() {
         return true; // 根据自定义逻辑返回 true 或 false
     });
 }
