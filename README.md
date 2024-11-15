@@ -31,15 +31,15 @@ return [
 ];
 ```
 
-可以在 `AppServiceProvider` 的 `register` 方法中绑定自定义触发条件
-- **默认行为**：如果没有绑定触发条件，默认情况下，触发条件为 `true`，日志记录完全依赖于总开关 `query.enabled` 配置。
+可以在 `AppServiceProvider` 的 `register` 方法中设置自定义触发条件
+- **默认行为**：如果没有设置触发条件，默认情况下，触发条件为 `true`，日志记录完全依赖于总开关 `query.enabled` 配置。
 - **自定义触发条件**：绑定触发条件后，SQL 查询日志将仅在 **总开关** 和 **触发条件** 都为 `true` 时才会记录。
 
 ```php
 public function register()
 {
-    $this->app->bind(TriggerManager::BIND_KEY, function() {
-        return true; // 根据自定义逻辑返回 true 或 false
+    \Mitoop\LaravelQueryLogger\Conditon::using(function () {
+        return true; // 自定义触发条件
     });
 }
 ```
