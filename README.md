@@ -38,7 +38,7 @@ return [
 ```php
 public function register()
 {
-    \Mitoop\LaravelQueryLogger\Conditon::using(function () {
+    \Mitoop\LaravelQueryLogger\Condition::using(function () {
         return true; // 自定义触发条件
     });
 }
