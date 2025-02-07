@@ -15,6 +15,10 @@ class ServiceProvider extends LaravelServiceProvider
         }
 
         DB::listen(function ($event) {
+            if (Condition::shouldExclude($event->sql)) {
+                return;
+            }
+
             Log::channel($this->app['config']->get('logging.query.channel'))->debug(
                 vsprintf('[%s] [%s] %s',
                     [
