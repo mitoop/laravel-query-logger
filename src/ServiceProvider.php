@@ -20,18 +20,22 @@ class ServiceProvider extends LaravelServiceProvider
                     [
                         $event->connection->getDatabaseName(),
                         $this->formatDuration($event->time),
-                        $this->getSql($event, version_compare($this->app->version(), '10.15.0', '>=')),
+                        $this->getSql($event),
                     ]
                 )
             );
         });
     }
 
-    private function getSql($event, $lge1015)
+    protected function getSql($event)
     {
+        if (method_exists($event, 'toRawSql')) {
+            return $event->toRawSql();
+        }
+
         $bindings = $event->connection->prepareBindings($event->bindings);
 
-        if ($lge1015) {
+        if (version_compare($this->app->version(), '10.15.0', '>=')) {
             return $event->connection
                 ->getQueryGrammar()
                 ->substituteBindingsIntoRawSql(
@@ -60,7 +64,7 @@ class ServiceProvider extends LaravelServiceProvider
         }, $event->sql);
     }
 
-    private function formatDuration($seconds)
+    protected function formatDuration($seconds): string
     {
         if ($seconds < 1) {
             return round($seconds * 1000).'μs';
