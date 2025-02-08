@@ -52,7 +52,6 @@ public function boot()
 你可以使用 Condition::excludeTables() 方法设置不需要记录日志的表，支持表名前缀匹配。
 
 示例：排除特定表
-示例：自定义触发条件
 ```php
 public function boot()
 {
