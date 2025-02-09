@@ -20,7 +20,7 @@ class ServiceProvider extends LaravelServiceProvider
             }
 
             DB::listen(function ($event) {
-                if (Condition::shouldExclude($event->sql)) {
+                if (Condition::shouldExclude($event->sql, $this->app['config']->get('logging.query.excluded_tables', []))) {
                     return;
                 }
 

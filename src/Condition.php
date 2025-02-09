@@ -6,8 +6,6 @@ class Condition
 {
     protected static $evaluator;
 
-    protected static $excludedTables = [];
-
     public static function using(callable $evaluator)
     {
         static::$evaluator = $evaluator;
@@ -18,18 +16,13 @@ class Condition
         return isset(static::$evaluator) ? (static::$evaluator)() : true;
     }
 
-    public static function excludeTables(array $tables): void
+    public static function shouldExclude(string $sql, array $tables): bool
     {
-        static::$excludedTables = $tables;
-    }
-
-    public static function shouldExclude(string $sql): bool
-    {
-        if (empty(static::$excludedTables)) {
+        if (empty($tables)) {
             return false;
         }
 
-        $pattern = '/\b(?:FROM|JOIN|INTO|UPDATE|DELETE FROM)\s+["`]?('.implode('|', array_map('preg_quote', static::$excludedTables)).')\w*["`]?\b/i';
+        $pattern = '/\b(?:FROM|JOIN|INTO|UPDATE|DELETE FROM)\s+["`]?('.implode('|', array_map('preg_quote', $tables)).')\w*["`]?\b/i';
 
         return preg_match($pattern, $sql) === 1;
     }

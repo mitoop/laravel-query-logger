@@ -27,6 +27,7 @@ return [
     'query' => [
         'enabled' => env('ENABLE_QUERY_LOG', false), // [总开关] 是否启用 SQL 查询日志
         'channel' => 'sql' // 配置日志记录频道
+        'excluded_tables' => ['telescope_'] // 排除表，支持表名前缀匹配
     ]
 ];
 ```
@@ -46,17 +47,6 @@ public function boot()
      Condition::using(function () {
          return is_local() || is_dev() || request()->hasCookie('debug_sql');
      });
-}
-```
-#### 排除特定表
-你可以使用 Condition::excludeTables() 方法设置不需要记录日志的表，支持表名前缀匹配。
-
-示例：排除特定表
-```php
-public function boot()
-{
-     // 排除以 `telescope_` 和 `logs_` 开头的表
-     Condition::excludeTables(['telescope_', 'logs_']);
 }
 ```
 
