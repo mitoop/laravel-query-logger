@@ -1,6 +1,6 @@
 
 <h1 align="center">Laravel Query Logger</h1>
-<p align="center">🍎 记录 SQL 执行日志</p>
+<p align="center">🔮 记录 SQL 执行日志</p>
 
 ## 安装
 ```shell
