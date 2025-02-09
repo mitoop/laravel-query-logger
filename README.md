@@ -26,7 +26,7 @@ return [
     // 新增日志记录配置
     'query' => [
         'enabled' => env('ENABLE_QUERY_LOG', false), // [总开关] 是否启用 SQL 查询日志
-        'channel' => 'sql' // 配置日志记录频道
+        'channel' => 'sql', // 配置日志记录频道
         'excluded_tables' => ['telescope_'] // 排除表，支持表名前缀匹配
     ]
 ];
