@@ -10,24 +10,30 @@ class ServiceProvider extends LaravelServiceProvider
 {
     public function boot()
     {
-        if (! $this->app['config']->get('logging.query.enabled') || ! Condition::evaluate()) {
+        if (! $this->app['config']->get('logging.query.enabled')) {
             return;
         }
 
-        DB::listen(function ($event) {
-            if (Condition::shouldExclude($event->sql)) {
+        $this->app->booted(function () {
+            if (! Condition::evaluate()) {
                 return;
             }
 
-            Log::channel($this->app['config']->get('logging.query.channel'))->debug(
-                vsprintf('[%s] [%s] %s',
-                    [
-                        $event->connection->getDatabaseName(),
-                        $this->formatDuration($event->time),
-                        $this->getSql($event),
-                    ]
-                )
-            );
+            DB::listen(function ($event) {
+                if (Condition::shouldExclude($event->sql, $this->app['config']->get('logging.query.excluded_tables', []))) {
+                    return;
+                }
+
+                Log::channel($this->app['config']->get('logging.query.channel'))->debug(
+                    vsprintf('[%s] [%s] %s',
+                        [
+                            $event->connection->getDatabaseName(),
+                            $this->formatDuration($event->time),
+                            $this->getSql($event),
+                        ]
+                    )
+                );
+            });
         });
     }
 
