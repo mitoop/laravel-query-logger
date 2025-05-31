@@ -1,6 +1,7 @@
-
 <h1 align="center">Laravel Query Logger</h1>
-<p align="center">🔮 记录 SQL 执行日志</p>
+
+<p align="center">🔮 轻松记录 SQL 执行日志，助力调试与分析</p>
+
 
 ## 安装
 ```shell
@@ -8,13 +9,13 @@ composer require mitoop/laravel-query-logger
 ```
 
 ## 配置
-在 `config/logging.php` 中添加一下日志频道配置
+在 config/logging.php 中添加日志频道配置：
 ```php
 <?php
 
 return [
     'channels' => [
-        // 其他日志频道配置...      
+        // 其他日志频道配置...
         'sql' => [
             'driver' => 'daily',
             'path' => storage_path('logs/sql.log'),
@@ -23,30 +24,32 @@ return [
         ],
     ],
 
-    // 新增日志记录配置
+    // 查询日志相关配置
     'query' => [
-        'enabled' => env('ENABLE_QUERY_LOG', false), // [总开关] 是否启用 SQL 查询日志
-        'channel' => 'sql', // 配置日志记录频道
-        'excluded_tables' => ['telescope_'] // 排除表，支持表名前缀匹配
-    ]
+        'enabled' => env('ENABLE_QUERY_LOG', false), // 总开关，是否启用 SQL 查询日志
+        'channel' => 'sql', // 日志记录频道
+        'excluded_tables' => ['telescope_'], // 排除表名，支持前缀匹配
+    ],
 ];
 ```
 ## 使用
 #### 默认行为
-当启用 SQL 查询日志（query.enabled 为 true）时，包默认会记录所有的 SQL 查询日志。你无需做额外配置。
+当 `query.enabled` 设置为 `true` 时，包会自动记录所有的 SQL 查询日志，无需额外配置。
+
 #### 自定义触发条件
-在 `AppServiceProvider` 的 `boot` 方法中，你可以设置自定义的 SQL 查询日志记录触发条件。
+如果你想根据自定义条件控制 SQL 日志的记录，可以在 `AppServiceProvider` 的 `boot()` 方法中，调用 `SqlDebug::enableWhen()` 设置触发条件。
 
-自定义触发条件后，SQL 日志将仅在 **总开关** 和 **自定义触发条件** 都为 `true` 时才会被记录。
+日志仅在 **总开关开启** 且 **自定义条件为真** 时，才会被记录。
 
-示例：自定义触发条件
 ```php
+<?php
+use Mitoop\LaravelQueryLogger\SqlDebug;
+
 public function boot()
 {
-     // 设置自定义触发条件
-     Condition::using(function () {
-         return is_local() || is_dev() || request()->hasCookie('debug_sql');
-     });
+    SqlDebug::enableWhen(function () {
+        return is_local() || is_dev() || request()->hasCookie('debug_sql');
+    });
 }
 ```
 
