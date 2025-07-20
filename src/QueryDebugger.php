@@ -2,7 +2,7 @@
 
 namespace Mitoop\LaravelQueryLogger;
 
-class SqlDebug
+class QueryDebugger
 {
     protected static $evaluator = null;
 
@@ -20,11 +20,11 @@ class SqlDebug
             return static::$cached;
         }
 
-        if (! static::$evaluator) {
+        if (! is_callable(static::$evaluator)) {
             return true;
         }
 
-        return static::$cached = (bool) call_user_func(static::$evaluator);
+        return static::$cached = (bool) (static::$evaluator)();
     }
 
     public static function shouldExclude(string $sql, array $tables): bool

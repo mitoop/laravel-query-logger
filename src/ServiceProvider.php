@@ -15,12 +15,12 @@ class ServiceProvider extends LaravelServiceProvider
         }
 
         $this->app->booted(function () {
-            if (! SqlDebug::isEnabled()) {
+            if (! QueryDebugger::isEnabled()) {
                 return;
             }
 
             DB::listen(function ($event) {
-                if (SqlDebug::shouldExclude($event->sql, $this->app['config']->get('logging.query.excluded_tables', []))) {
+                if (QueryDebugger::shouldExclude($event->sql, $this->app['config']->get('logging.query.excluded_tables', []))) {
                     return;
                 }
 
