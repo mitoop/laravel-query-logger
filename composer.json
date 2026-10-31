@@ -1,13 +1,24 @@
 {
     "name": "mitoop/laravel-query-logger",
+    "description": "Log executed SQL queries to a Laravel log channel.",
     "type": "library",
     "require": {
-        "illuminate/support": "^6|^7|^8|^9|^10|^11|^12|^13"
+        "php": "^8.2",
+        "illuminate/support": "^11|^12|^13"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.30",
+        "phpunit/phpunit": "^10.5|^11.5|^12.0"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Mitoop\\LaravelQueryLogger\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mitoop\\LaravelQueryLogger\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -20,5 +31,9 @@
         "laravel": {
             "providers": ["Mitoop\\LaravelQueryLogger\\ServiceProvider"]
         }
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit",
+        "format": "@php vendor/bin/pint"
     }
 }

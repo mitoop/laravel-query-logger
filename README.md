@@ -19,7 +19,7 @@ return [
         'sql' => [
             'driver' => 'daily',
             'path' => storage_path('logs/sql.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => 'debug',
             'permission' => 0664,
         ],
     ],
@@ -34,21 +34,24 @@ return [
 ```
 ## 使用
 #### 默认行为
-当 `query.enabled` 设置为 `true` 时，包会自动记录所有的 SQL 查询日志，无需额外配置。
+当 `query.enabled` 设置为 `true` 时，包会记录 SQL。日志形如：
+
+```text
+[report] [12.5ms] select * from `users` where `id` = 1
+```
+
+时间来自查询耗时，单位按区间显示为 `μs`、`ms` 或 `s`。
 
 #### 自定义触发条件
-如果你想根据自定义条件控制 SQL 日志的记录，可以在 `AppServiceProvider` 的 `boot()` 方法中，调用 `QueryDebugger::enableWhen()` 设置触发条件。
-
-日志仅在 **总开关开启** 且 **自定义条件为真** 时，才会被记录。
+在 `AppServiceProvider` 的 `boot()` 方法中调用 `QueryLogger::logWhen()`。总开关关闭时不会记录。总开关开启后，闭包在**每条 SQL 执行时**判断，不会在启动时缓存结果，因此可以读取当前请求：
 
 ```php
-<?php
-use Mitoop\LaravelQueryLogger\SqlDebug;
+use Mitoop\LaravelQueryLogger\QueryLogger;
 
-public function boot()
+public function boot(): void
 {
-    QueryDebugger::enableWhen(function () {
-        return is_local() || is_dev() || request()->hasCookie('debug_sql');
+    QueryLogger::logWhen(function () {
+        return app()->isLocal() || request()->cookie('debug_sql') === '9527';
     });
 }
 ```
